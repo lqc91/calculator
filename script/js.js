@@ -4,8 +4,8 @@ var formerInput = calculator.querySelector('.formerInput');
 var laterInput = calculator.querySelector('.laterInput');
 var resultOutput = calculator.querySelector('.resultOutput');
 var btn = calculator.querySelectorAll('.btn');
-for (var i = 0; i < btn.length; i++) {
-	btn[i].onclick = function () {
+each(btn, function (index, elem) {
+	elem.onclick = function() {
 		switch (this.title) {
 			case 'add':
 				addHandler();
@@ -21,20 +21,43 @@ for (var i = 0; i < btn.length; i++) {
 				break;
 		}
 	};
+});
+function each(array, fn) {
+	for (var i = 0; i < array.length; i++) {
+		fn(i, array[i]);
+	}
 }
 function addHandler() {
-	sign.innerHTML = '+';
-	resultOutput.innerHTML = +formerInput.value + +laterInput.value; // +为一元运算符，取正，没有明显的含义，但可强制转换为数字
+	updateSign('+');
+	outputResult(add(+formerInput.value, +laterInput.value)); // +为一元运算符，取正，没有明显的含义，但可强制转换为数字
 }
 function subtractHandler() {
-	sign.innerHTML = '-';
-	resultOutput.innerHTML = formerInput.value - laterInput.value; // 若两字符串相减，则自动转化为数字相减
+	updateSign('-');
+	outputResult(subtract(formerInput.value, laterInput.value)); // 若两字符串相减，则自动转化为数字相减
 }
 function multiplyHandler() {
-	sign.innerHTML = '*';
-	resultOutput.innerHTML = formerInput.value * laterInput.value;
+	updateSign('*');
+	outputResult(multiply(formerInput.value, laterInput.value));
 }
 function divideHandler() {
-	sign.innerHTML = '/';
-	resultOutput.innerHTML = formerInput.value / laterInput.value;
+	updateSign('/');
+	outputResult(divide(formerInput.value, laterInput.value));
+}
+function updateSign(symbol) {
+	sign.innerHTML = symbol;
+}
+function add(num1, num2) {
+	return +num1 + +num2;
+}
+function subtract(num1, num2) {
+	return num1 - num2;
+}
+function multiply(num1, num2) {
+	return num1 * num2;
+}
+function divide(num1, num2) {
+	return num1 / num2;
+}
+function outputResult(fn) {
+	resultOutput.innerHTML = fn;
 }
