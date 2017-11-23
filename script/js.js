@@ -18,24 +18,23 @@ var operation = {
 	},
 	divide: function(num1, num2) {
 		return num1 / num2;
+	},
+	addOperation: function(name, fn) {
+		if (!this[name]) {
+			this[name] = fn;
+		}
+		return this; // 链式调用
 	}
 };
+operation.addOperation('mod', function(num1, num2) {
+	return num1 % num2;
+}).addOperation('power', function(base, power) {
+	return Math.pow(base, power);
+});
 each(calculatorElem.btns, function (index, elem) {
 	elem.onclick = function() {
-		switch (this.title) {
-			case 'add':
-				addHandler();
-				break;
-			case 'subtract':
-				subtractHandler();
-				break;
-			case 'multiply':
-				multiplyHandler();
-				break;
-			case 'divide':
-				divideHandler();
-				break;
-		}
+		updateSign(this.value);
+		outputResult(operate(this.title, calculatorElem.formerInput.value, calculatorElem.laterInput.value));
 	};
 });
 function each(array, fn) {
@@ -43,25 +42,13 @@ function each(array, fn) {
 		fn(i, array[i]);
 	}
 }
-function addHandler() {
-	updateSign('+');
-	outputResult(operation.add(+calculatorElem.formerInput.value, +calculatorElem.laterInput.value)); // +为一元运算符，取正，没有明显的含义，但可强制转换为数字
-}
-function subtractHandler() {
-	updateSign('-');
-	outputResult(operation.subtract(calculatorElem.formerInput.value, calculatorElem.laterInput.value)); // 若两字符串相减，则自动转化为数字相减
-}
-function multiplyHandler() {
-	updateSign('*');
-	outputResult(operation.multiply(calculatorElem.formerInput.value, calculatorElem.laterInput.value));
-}
-function divideHandler() {
-	updateSign('/');
-	outputResult(operation.divide(calculatorElem.formerInput.value, calculatorElem.laterInput.value));
-}
 function updateSign(symbol) {
 	calculatorElem.sign.innerHTML = symbol;
 }
 function outputResult(fn) {
 	calculatorElem.resultOutput.innerHTML = fn;
+}
+function operate(name, num1, num2) {
+	if(!operation[name]) throw Error('不存在名为' + name + '的方法');
+	return operation[name](num1, num2);
 }
